@@ -1,0 +1,32 @@
+# letsencrypt-elb configuration file
+default: &default
+  aws_access_key_id: XXXX # (optional) When ENV variable AWS_ACCESS_KEY_ID is NOT present used this
+  aws_secret_access_key: YYYXXXXYYYXXX # (optional) When ENV variable AWS_SECRET_ACCESS_KEY is NOT present used this
+  aws_region: eu-central-1 # (required) AWS region
+  dns_hook_sleep: 20 # (optional) How many seconds should script wait for DNS changes propagation. Default is 20 which should be ok for Route53
+  days_to_expiration: 25 # (optional) Regenerate certificates wich expiring in 25 days. Defautl is 25
+  acme_verification_sleep: 2 # (optional) Wait 2 seconds before check status from acme servers. Default 2
+  acme_private_key: ./acme_key/private.key # (optional) Acme private key location. Default is ./acme_key/private.key
+  dns_hook: AWSRoute53 # (optional) Cheeck Hooks.md for more informations
+  acme_endpoint: https://acme-v01.api.letsencrypt.org/ # (required) use https://acme-staging.api.letsencrypt.org/ for testing
+  debug: true # Turn on debug messages. Should be turned of in production
+  upload_hook: AWSElasticBalancer # (optional) Cheeck Hooks.md for more informations
+  acme_email: admin@example.com # (required) - Use this email address when creating new acme private key
+
+  certificates: # (required) Certificate configuration
+    example-com: # (required) Certificate identificator.
+      domains: # (required) Domain configuration
+        example.io: [www.example.io.] # (required) domain.name: [certificate hostnames]
+        example2.io: [www, admin.example2.io.] # You can use full domaiin name witn . at the end of the domain or subdomain part of main domain without ending .
+      elbs: # (required) ElasticLoadBalancer configuration
+        elb-www-examplecom: [443, 8080] # (required) balancer-name-from-aws-console: [Balancer port, Instance port]. Instance port is required only in situation when new listener should be created
+    testing-com: # another certificate
+      domains:
+        testing.io: [www]
+      elbs:
+        elb-www-testingcom: [443, 3128]
+
+development:
+  <<: *default
+  debug: true
+  acme_endpoint: https://acme-staging.api.letsencrypt.org/
