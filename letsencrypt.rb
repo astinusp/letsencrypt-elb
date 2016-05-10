@@ -18,6 +18,7 @@ Dir['./hooks/*.rb', './lib/*.rb'].each { |file| require file }
 def create_lets_object(hash = {})
   OpenStruct.new(
     domains: hash[:domains] || {},
+    name: hash[:name] || nil,
     elbs: hash[:elbs] || nil,
     challenges: hash[:challenges] || {},
     cerificate: hash[:certificate] || nil)
@@ -121,6 +122,7 @@ Kernel.loop do
       end
     end
     @dns_hook.remove_challenges(lets_object)
+    puts "before writing cert"
     lets_object.certificate = save_certificate(client, lets_object)
 
     @upload_hook.update_elastic_load_balancer(lets_object)

@@ -26,7 +26,7 @@ class AWSElasticBalancer
   end
 
   def upload_certificate_to_aws(object)
-    cert_name = generate_cert_filename(object.domain, object.hosts)
+    cert_name = generate_cert_filename(object.name, object.domains)
     begin
       res = iam_cert_upload_by_name(object.certificate, cert_name)
       @remove_name = "#{cert_name}-v2"
